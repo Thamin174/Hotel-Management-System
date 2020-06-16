@@ -9,7 +9,7 @@ namespace HMSystem.Areas.Dashboard.Controllers
     public class DashboardController : Controller
     {
         // GET: Dashboard/Dashboard
-        [Authorize(Roles ="Administrator")]
+        //[Authorize(Roles ="Administrator")]
         public ActionResult Index()
         {
             return View();
