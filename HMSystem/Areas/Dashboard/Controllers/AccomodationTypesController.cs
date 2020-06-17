@@ -13,19 +13,19 @@ namespace HMSystem.Areas.Dashboard.Controllers
     {
         AccomodationTypesService accomodationTypesService = new AccomodationTypesService();
 
-        public ActionResult Index()
+        public ActionResult Index(string searchTerm)
         {
-            return View();
-        }
 
-        public ActionResult Listing()
-        {
             AccomodationTypesListingModel model = new AccomodationTypesListingModel();
 
-            model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
+            model.SearchTerm = searchTerm;
 
-            return PartialView("_Listing", model);
+
+            model.AccomodationTypes = accomodationTypesService.SearchAccomodationTypes(searchTerm);
+
+            return View(model);
         }
+
 
         [HttpGet]
         public ActionResult Action(int? ID)
