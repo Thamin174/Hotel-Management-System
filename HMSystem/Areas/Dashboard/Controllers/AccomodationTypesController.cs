@@ -11,52 +11,109 @@ namespace HMSystem.Areas.Dashboard.Controllers
 {
     public class AccomodationTypesController : Controller
     {
-            AccomodationTypesService accomodationTypesService = new AccomodationTypesService();
+        AccomodationTypesService accomodationTypesService = new AccomodationTypesService();
 
-            public ActionResult Index()
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult Listing()
+        {
+            AccomodationTypesListingModel model = new AccomodationTypesListingModel();
+
+            model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
+
+            return PartialView("_Listing", model);
+        }
+
+        [HttpGet]
+        public ActionResult Action(int? ID)
+        {
+            AccomodationTypesAddOrEditModel model = new AccomodationTypesAddOrEditModel();
+
+            if(ID.HasValue)
             {
-                return View();
+                var accomodationType = accomodationTypesService.GetAccomodationTypeByID(ID.Value);
+
+                model.ID = accomodationType.ID;
+                model.Name = accomodationType.Name;
+                model.Description = accomodationType.Description;
             }
 
-            public ActionResult Listing()
+            return PartialView("_AddOrEdit", model);
+        }
+
+        [HttpPost]
+        public JsonResult Action(AccomodationTypesAddOrEditModel model)
+        {
+            JsonResult json = new JsonResult();
+
+            var result = false;
+
+            if(model.ID > 0)
             {
-                AccomodationTypesListingModel model = new AccomodationTypesListingModel();
+                var accomodationType = accomodationTypesService.GetAccomodationTypeByID(model.ID);
 
-                model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
+                accomodationType.Name = model.Name;
+                accomodationType.Description = model.Name;
 
-                return PartialView("_Listing", model);
+                result = accomodationTypesService.UpdateAccomodationType(accomodationType);
             }
-
-            [HttpGet]
-            public ActionResult Action()
+            else
             {
-                AccomodationTypesAddOrEditModel model = new AccomodationTypesAddOrEditModel();
-
-                return PartialView("_AddOrEdit", model);
-            }
-
-            [HttpPost]
-            public JsonResult Action(AccomodationTypesAddOrEditModel model)
-            {
-                JsonResult json = new JsonResult();
-
                 AccomodationType accomodationType = new AccomodationType();
 
                 accomodationType.Name = model.Name;
                 accomodationType.Description = model.Description;
 
-                var result = accomodationTypesService.SaveAccomodationType(accomodationType);
-
-                if (result)
-                {
-                    json.Data = new { Success = true };
-                }
-                else
-                {
-                    json.Data = new { Success = false, Message = "Unable to add Accomodation Type." };
-                }
-
-                return json;
+                result = accomodationTypesService.SaveAccomodationType(accomodationType);
             }
+
+            if (result)
+            {
+                json.Data = new { Success = true };
+            }
+            else
+            {
+                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation Type." };
+            }
+
+            return json;
+        }
+
+        public ActionResult Delete(int ID)
+        {
+            AccomodationTypesAddOrEditModel model = new AccomodationTypesAddOrEditModel();
+
+            var accomodationType = accomodationTypesService.GetAccomodationTypeByID(ID);
+
+            model.ID = accomodationType.ID;
+
+            return PartialView("_Delete", model);
+        }
+
+        [HttpPost]
+        public JsonResult Delete(AccomodationTypesAddOrEditModel model)
+        {
+            JsonResult json = new JsonResult();
+
+            var result = false;
+
+            var accomodationType = accomodationTypesService.GetAccomodationTypeByID(model.ID);
+
+            result = accomodationTypesService.DeleteAccomodationType(accomodationType);
+
+            if (result)
+            {
+                json.Data = new { Success = true };
+            }
+            else
+            {
+                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation Type." };
+            }
+
+            return json;
+        }
     }
 }
