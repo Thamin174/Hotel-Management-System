@@ -1,6 +1,7 @@
 ﻿using HMS.Services;
 using HMSystem.Areas.Dashboard.ViewModels;
 using HMSystem.Entities;
+using HMSystem.ViewModels;
 using System.Web.Mvc;
 
 namespace HMSystem.Areas.Dashboard.Controllers
