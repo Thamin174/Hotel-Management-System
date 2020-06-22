@@ -7,27 +7,27 @@ using System.Web;
 
 namespace HMSystem.Areas.Dashboard.ViewModels
 {
-    public class AccomodationPackagesListingModel
+    public class AccomodationsListingModel
     {
+        public IEnumerable<Accomodation> Accomodations { get; set; }
+
+        public int? AccomodationPackageID { get; set; }
         public IEnumerable<AccomodationPackage> AccomodationPackages { get; set; }
-        public int? AccomodationTypeID { get; set; }
-        public IEnumerable<AccomodationType> AccomodationTypes { get; set; }
         public string SearchTerm { get; set; }
 
         public Pager Pager { get; set; }
     }
 
-    public class AccomodationPackageActionModel
+    public class AccomodationActionModel
     {
         public int ID { get; set; }
 
-        public int AccomodationTypeID { get; set; }
-        public AccomodationType AccomodationType { get; set; }
+        public int AccomodationPackageID { get; set; }
+        public AccomodationPackage AccomodationPackage { get; set; }
 
         public string Name { get; set; }
-        public int NoOfRoom { get; set; }
-        public decimal FeePerNight { get; set; }
+        public string Description { get; set; }
 
-        public IEnumerable<AccomodationType> AccomodationTypes { get; set; }
+        public IEnumerable<AccomodationPackage> AccomodationPackages { get; set; }
     }
 }
