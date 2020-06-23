@@ -59,6 +59,10 @@
     <Compile Include="Migrations\202006140247102_initialModel.Designer.cs">
       <DependentUpon>202006140247102_initialModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006230944300_addedUserProperties.cs" />
+    <Compile Include="Migrations\202006230944300_addedUserProperties.Designer.cs">
+      <DependentUpon>202006230944300_addedUserProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -75,6 +79,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202006140247102_initialModel.resx">
       <DependentUpon>202006140247102_initialModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006230944300_addedUserProperties.resx">
+      <DependentUpon>202006230944300_addedUserProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
