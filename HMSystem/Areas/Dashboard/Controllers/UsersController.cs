@@ -3,6 +3,7 @@ using HMSystem.Areas.Dashboard.ViewModels;
 using HMSystem.Entities;
 using HMSystem.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace HMSystem.Areas.Dashboard.Controllers
 
         private HMSSignInManager _signInManager;
         private HMSUserManager _userManager;
+        private HMSRoleManager _roleManager;
         public HMSSignInManager SignInManager
         {
             get
@@ -41,24 +43,39 @@ namespace HMSystem.Areas.Dashboard.Controllers
                 _userManager = value;
             }
         }
+
+        public HMSRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<HMSRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
         public UsersController()
         {
         }
 
-        // GET: Dashboard/Users
-        AccomodationPackagesService accomodationPackagesService = new AccomodationPackagesService();
-        AccomodationsService accomodationsService = new AccomodationsService();
+        public UsersController(HMSUserManager userManager, HMSSignInManager signInManager, HMSRoleManager roleManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+            RoleManager = roleManager;
+        }
 
         public ActionResult Index(string searchTerm, string roleID, int? page)
         {
-            int recordSize = 1;
+            int recordSize = 10;
             page = page ?? 1;
 
             UsersListingModel model = new UsersListingModel();
 
             model.SearchTerm = searchTerm;
             model.RoleID = roleID;
-            //model.Roles = accomodationPackagesService.GetAllAccomodationPackages();
+            model.Roles = RoleManager.Roles.ToList();
 
             model.Users = SearchUsers(searchTerm, roleID, page.Value, recordSize);
             var totalRecords = SearchUsersCount(searchTerm, roleID);
@@ -206,6 +223,63 @@ namespace HMSystem.Areas.Dashboard.Controllers
             {
                 json.Data = new { Success = false, Message = "Invalid user." };
             }
+
+            return json;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> UserRoles(string ID)
+        {
+            UserRolesModel model = new UserRolesModel();
+
+            model.Roles = RoleManager.Roles.ToList();
+
+            var user = await UserManager.FindByIdAsync(ID);
+            var userRoleIDs = user.Roles.Select(x => x.RoleId).ToList();
+            model.UserRoles = RoleManager.Roles.Where(x => userRoleIDs.Contains(x.Id)).ToList();
+
+            return PartialView("_UserRoles", model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UserRoles(UserActionModel model)
+        {
+            JsonResult json = new JsonResult();
+
+            IdentityResult result = null;
+
+            if (!string.IsNullOrEmpty(model.ID)) //we are trying to edit a record
+            {
+                var user = await UserManager.FindByIdAsync(model.ID);
+
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
+
+                result = await UserManager.UpdateAsync(user);
+
+
+            }
+            else //we are trying to create a record
+            {
+                var user = new HMSUser();
+
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
+
+                result = await UserManager.CreateAsync(user);
+
+            }
+
+
+            json.Data = new { Success = result.Succeeded, Message = string.Join(",", result.Errors) };
 
             return json;
         }
