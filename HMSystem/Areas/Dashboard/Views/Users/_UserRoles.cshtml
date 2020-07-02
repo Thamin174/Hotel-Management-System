@@ -14,7 +14,7 @@
         <div class="modal-body">
             @if (Model.UserRoles != null && Model.UserRoles.Count() > 0)
             {
-                <table>
+                <table class="table">
                     <thead>
                         <tr>
                             <th colspan="2">
@@ -23,12 +23,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var role in Model.Roles)
+                        @foreach (var role in Model.UserRoles)
                         {
                             <tr>
                                 <td>@role.Name</td>
                                 <td>
-                                    <button data-href="@Url.Action("DeleteUserRole", "Users", new { ID = role.Id })" type="button" class="data-btn btn btn-danger" data-toggle="modal" data-target="#actionModal"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
+                                    <button data-href="@Url.Action("UserRoleOpertion", "Users", new {userID = Model.UserID, roleID = role.Id, isDelete = true })" type="button" class="btnRoleOperation btn btn-danger" ><i class="fas fa-user-times mr-1"></i> Delete</button>
 
                                 </td>
                             </tr>
@@ -42,7 +42,6 @@
                     This user has no roles.
                 </div>
             }
-            <hr />
 
             @if (Model.Roles != null && Model.Roles.Count() > 0)
 			{
@@ -62,22 +61,15 @@
 									@role.Name
 								</td>
 								<td>
-									<button data-href="@Url.Action("AssignUserRole", "Users", new { ID = role.Id })" type="button" class="data-btn btn btn-success" data-toggle="modal" data-target="#actionModal"><i class="fas fa-trash-alt mr-1"></i> Assign</button>
+									<button data-href="@Url.Action("UserRoleOpertion", "Users", new {userID= Model.UserID, roleID = role.Id })" type="button" class="btnRoleOperation btn btn-success"><i class="fas fa-user-check mr-1"></i>Assign</button>
 								</td>
 							</tr>
 						}
 					</tbody>
 				</table>
 			}
-			else
-			{
-				<div class="alert alert-warning" role="alert">
-					No roles available.
-				</div>
-			}
         </div>
         <div class="modal-footer">
-            <button id="actionButton" type="button" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Save</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times mr-1"></i> Close</button>
         </div>
     </div>
@@ -85,21 +77,25 @@
 }
 
 <script>
-	$("#actionButton").click(function () {
-		$.ajax({
-			url: '@Url.Action("Action", "Users")',
-			type: "post",
-			data: $("#actionForm").serialize()
-		})
-		.done(function (response) {
-			if(response.Success)
+    $(".btnRoleOperation").click(function () {
+        $.ajax({
+            url: $(this).attr("data-href"),
+            type: "POST"
+        })
+            .done(function (response) {
+                if(response.Success)
 			{
-				location.reload();
+				$.ajax({
+					url: "@Url.Action("UserRoles", "Users", new { ID = Model.UserID })",
+				})
+				.done(function (response) {
+					$("#actionModal .modal-dialog").html(response);
+				});
 			}
 			else {
-				$(".errorDiv").html(response.Message);
+				alert(response.Message);
 			}
-		});
-	});
+            });
+    });
 </script>
 
