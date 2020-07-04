@@ -63,6 +63,10 @@
     <Compile Include="Migrations\202006230944300_addedUserProperties.Designer.cs">
       <DependentUpon>202006230944300_addedUserProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202007040501551_AddedPictureEntity.cs" />
+    <Compile Include="Migrations\202007040501551_AddedPictureEntity.Designer.cs">
+      <DependentUpon>202007040501551_AddedPictureEntity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -82,6 +86,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006230944300_addedUserProperties.resx">
       <DependentUpon>202006230944300_addedUserProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007040501551_AddedPictureEntity.resx">
+      <DependentUpon>202007040501551_AddedPictureEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

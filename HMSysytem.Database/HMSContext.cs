@@ -26,6 +26,7 @@ namespace HMSysytem.Database
         public DbSet<AccomodationPackage> AccomodationPackages { get; set; }
         public DbSet<Accomodation> Accomodations { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
 
 
     }

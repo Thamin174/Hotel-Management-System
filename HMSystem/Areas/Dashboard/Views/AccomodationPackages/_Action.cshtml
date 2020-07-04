@@ -49,6 +49,11 @@
                     <label>FeePerNight</label>
                     <input class="form-control" name="FeePerNight" placeholder="Enter Fee Per Night." value="@Model.FeePerNight">
                 </div>
+
+                <div class="form-group">
+                    <label>Pictures</label>
+                    <input class="form-control" id="selectPictures" name="Pictures" type="file" multiple >
+                </div>
             </form>
 
             <div class="errorDiv">
@@ -78,5 +83,29 @@
 				$(".errorDiv").html(response.Message);
 			}
 		});
-	});
+    });
+
+    $("#selectPictures").change(function () {
+
+        var pictures = this.files;
+
+        var formData = new FormData();
+
+        for (var i = 0; i < pictures.length; i++) {
+            formData.append("Picture", pictures[i]);
+        }
+
+		$.ajax({
+			url: '@Url.Action("UploadPictures", "Dashboard")',
+            type: "post",
+            data: formData,
+            processData: false,
+			contentType: false
+		})
+        .done(function (response) {
+                debugger;
+		});
+    });
+
+
 </script>

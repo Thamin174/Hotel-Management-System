@@ -14,6 +14,13 @@ namespace HMSystem
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+               name: "FEAccomodations",
+               url: "Accomodations",
+               defaults: new { Area="",controller = "Accomodations", action = "Index" },
+               namespaces: new[] { "HMSystem.Controllers" }
+           );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

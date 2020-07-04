@@ -14,5 +14,7 @@ namespace HMSystem.Entities
 
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public List<AccomodationPicture> AccomodationPictures { get; set; }
     }
 }
