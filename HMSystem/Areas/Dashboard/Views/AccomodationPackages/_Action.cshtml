@@ -53,6 +53,17 @@
                 <div class="form-group">
                     <label>Pictures</label>
                     <input class="form-control" id="selectPictures" name="Pictures" type="file" multiple >
+                    <input type="hidden" name="pictureIDs" id="pictureIDs" value="" />
+                </div>
+
+                <div id="picturesArea">
+                    @if (Model.AccomodationPackagePictures != null && Model.AccomodationPackagePictures.Count > 0)
+                    {
+                        foreach (var accomodationPicture in Model.AccomodationPackagePictures)
+                        {
+                            <img src="/images/site/@accomodationPicture.Picture.URL" class="img-fluid" style="width:200px" onclick="removeMe(this)" data-id="@accomodationPicture.PictureID" />
+                        }
+                    }
                 </div>
             </form>
 
@@ -66,9 +77,22 @@
         </div>
     </div>
 }
+<div id="imageTemplate">
+    <img src="" class="img-fluid" style="width:200px" onclick="removeMe(this)"  />
+</div>
 
 <script>
-	$("#actionButton").click(function () {
+    $("#actionButton").click(function () {
+
+        var pictureIDs = [];
+        $("#picturesArea img").each(function () {
+            var picID = $(this).attr("data-id");
+
+            pictureIDs.push(picID);
+        });
+
+        $("#pictureIDs").val(pictureIDs.join());
+
 		$.ajax({
 			url: '@Url.Action("Action", "AccomodationPackages")',
 			type: "post",
@@ -103,9 +127,22 @@
 			contentType: false
 		})
         .done(function (response) {
-                debugger;
+
+            for (var i = 0; i < response.length; i++) {
+                var picture = response[i];
+
+                var $imgHTML = $("#imageTemplate").clone();
+
+                $imgHTML.find("img").attr("src", "/images/site/" + picture.URL);
+                $imgHTML.find("img").attr("data-id", picture.ID);
+
+                $("#picturesArea").append($imgHTML.html());
+            }
 		});
     });
 
+    function removeMe(element) {
+        element.remove();
+    }
 
 </script>

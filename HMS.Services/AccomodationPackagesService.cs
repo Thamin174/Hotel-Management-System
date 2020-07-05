@@ -21,7 +21,7 @@ namespace HMS.Services
         {
             var context = new HMSContext();
 
-            return context.AccomodationPackages.Where(x=>x.AccomodationTypeID==accomodationTypeID).ToList();
+            return context.AccomodationPackages.Where(x => x.AccomodationTypeID == accomodationTypeID).ToList();
         }
 
         public IEnumerable<AccomodationPackage> SearchAccomodationPackages(string searchTerm, int? accomodationTypeID, int page, int recordSize)
@@ -70,10 +70,10 @@ namespace HMS.Services
 
         public AccomodationPackage GetAccomodationPackageByID(int ID)
         {
-            using (var context = new HMSContext())
-            {
-                return context.AccomodationPackages.Find(ID);
-            }
+            var context = new HMSContext();
+
+            return context.AccomodationPackages.Find(ID);
+
         }
 
         public bool SaveAccomodationPackage(AccomodationPackage accomodationPackage)
@@ -88,8 +88,13 @@ namespace HMS.Services
         public bool UpdateAccomodationPackage(AccomodationPackage accomodationPackage)
         {
             var context = new HMSContext();
+            var exitingAccomodationPackage = context.AccomodationPackages.Find(accomodationPackage.ID);
 
-            context.Entry(accomodationPackage).State = System.Data.Entity.EntityState.Modified;
+            context.AccomodationPackagePictures.RemoveRange(exitingAccomodationPackage.AccomodationPackagePictures);
+
+            context.Entry(exitingAccomodationPackage).CurrentValues.SetValues(accomodationPackage);
+
+            context.AccomodationPackagePictures.AddRange(accomodationPackage.AccomodationPackagePictures);
 
             return context.SaveChanges() > 0;
         }
@@ -101,6 +106,14 @@ namespace HMS.Services
             context.Entry(accomodationPackage).State = System.Data.Entity.EntityState.Deleted;
 
             return context.SaveChanges() > 0;
+        }
+
+
+        public List<AccomodationPackagePicture> GetPicturesByAccomodationPackageID(int accomodationPackageID)
+        {
+            var context = new HMSContext();
+
+            return context.AccomodationPackages.Find(accomodationPackageID).AccomodationPackagePictures.ToList();
         }
     }
 }

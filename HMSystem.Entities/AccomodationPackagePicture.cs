@@ -11,6 +11,6 @@ namespace HMSystem.Entities
         public int ID { get; set; }
         public int AccomodationPackageID { get; set; }
         public int PictureID { get; set; }
-        public Picture Picture { get; set; }
+        public virtual Picture Picture { get; set; }
     }
 }

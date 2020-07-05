@@ -2,6 +2,8 @@
 using HMSystem.Areas.Dashboard.ViewModels;
 using HMSystem.Entities;
 using HMSystem.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace HMSystem.Areas.Dashboard.Controllers
@@ -10,6 +12,7 @@ namespace HMSystem.Areas.Dashboard.Controllers
     {
         AccomodationPackagesService accomodationPackagesService = new AccomodationPackagesService();
         AccomodationTypesService accomodationTypesService = new AccomodationTypesService();
+        DashboardsService dashboardsService = new DashboardsService();
 
         public ActionResult Index(string searchTerm, int? accomodationTypeID, int? page)
         {
@@ -46,6 +49,8 @@ namespace HMSystem.Areas.Dashboard.Controllers
                 model.Name = accomodationPackage.Name;
                 model.NoOfRoom = accomodationPackage.NoOfRoom;
                 model.FeePerNight = accomodationPackage.FeePerNight;
+
+                model.AccomodationPackagePictures = accomodationPackagesService.GetPicturesByAccomodationPackageID(accomodationPackage.ID);
             }
 
             model.AccomodationTypes = accomodationTypesService.GetAllAccomodationTypes();
@@ -60,6 +65,11 @@ namespace HMSystem.Areas.Dashboard.Controllers
 
             var result = false;
 
+            //model.PictureIDs = "90,67,23" = ["90", "67", "23"] = {90, 67, 23}
+            List<int> pictureIDs = !string.IsNullOrEmpty(model.PictureIDs) ? model.PictureIDs.Split(',').Select(x => int.Parse(x)).ToList() : new List<int>();
+            var pictures = dashboardsService.GetPicturesByIDs(pictureIDs);
+
+
             if (model.ID > 0) //we are trying to edit a record
             {
                 var accomodationPackage = accomodationPackagesService.GetAccomodationPackageByID(model.ID);
@@ -68,6 +78,9 @@ namespace HMSystem.Areas.Dashboard.Controllers
                 accomodationPackage.Name = model.Name;
                 accomodationPackage.NoOfRoom = model.NoOfRoom;
                 accomodationPackage.FeePerNight = model.FeePerNight;
+
+                accomodationPackage.AccomodationPackagePictures.Clear();
+                accomodationPackage.AccomodationPackagePictures.AddRange(pictures.Select(x => new AccomodationPackagePicture() { AccomodationPackageID = accomodationPackage.ID, PictureID = x.ID }));
 
                 result = accomodationPackagesService.UpdateAccomodationPackage(accomodationPackage);
             }
@@ -80,6 +93,13 @@ namespace HMSystem.Areas.Dashboard.Controllers
                 accomodationPackage.Name = model.Name;
                 accomodationPackage.NoOfRoom = model.NoOfRoom;
                 accomodationPackage.FeePerNight = model.FeePerNight;
+
+
+              
+
+                accomodationPackage.AccomodationPackagePictures = new List<AccomodationPackagePicture>();
+                accomodationPackage.AccomodationPackagePictures.AddRange(pictures.Select(x => new AccomodationPackagePicture() { PictureID = x.ID }));
+
 
                 result = accomodationPackagesService.SaveAccomodationPackage(accomodationPackage);
             }
